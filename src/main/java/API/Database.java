@@ -1,10 +1,10 @@
 package API;
 
 
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
+import API.Data.DataDocs;
+import API.Data.DataKladr;
+import API.Data.DataOIV;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -15,40 +15,46 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
-import java.sql.DriverManager;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
+//TODO Сделать нормальную обработку ошибок
 
 public class Database {
-    static final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/catalog";
-    static final String USER = "postgres";
-    static final String PASS = "123";
+    static private final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/catalog";
+    static private final String USER = "postgres";
+    static private final String PASS = "123";
 
     public void addInDB(File fileIn, String tableDB) throws SQLException {
         String typeFile = fileIn.getName().toLowerCase().substring(fileIn.getName().lastIndexOf('.'));
         StringBuilder sql = new StringBuilder();
-        switch (typeFile) {
-            case ".csv":
-                sql = readCSV(fileIn, tableDB);
-                System.out.println("Считывание закончено!");
-                break;
-            case ".xls":
-            case ".xlsx":
-                sql = readXLSX(fileIn, tableDB);
-                System.out.println("Считывание закончено!");
-                break;
-        }
-        if (sql != null) {
-            try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
-                Statement statement = connection.createStatement();
-                statement.execute(sql.toString());
-                System.out.println("Запись в БД закончена!");
-            } catch (SQLException e) {
-                System.out.println("Connection Failed");
-                e.printStackTrace();
+        try {
+            switch (typeFile) {
+                case ".csv":
+                    sql = readCSV(fileIn, tableDB);
+                    System.out.println("Считывание закончено!");
+                    break;
+                case ".xlsx":
+                    sql = readXLSX(fileIn, tableDB);
+                    System.out.println("Считывание закончено!");
+                    break;
             }
+            if (sql != null) {
+                try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
+                    Statement statement = connection.createStatement();
+                    statement.execute(sql.toString());
+                    System.out.println("Запись в БД закончена!");
+                } catch (SQLException e) {
+                    System.out.println("Connection Failed");
+                    e.printStackTrace();
+                }
+            } else {
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -67,8 +73,8 @@ public class Database {
                             sb.append(cell.getNumericCellValue());
                             break;
                         case STRING:
-                            String value = cell.getStringCellValue().replace("\n"," ")
-                                    .replace("  "," ");
+                            String value = cell.getStringCellValue().replace("\n", " ")
+                                    .replace("  ", " ");
                             try {
                                 sb.append(Integer.parseInt(value));
                             } catch (Exception e) {
@@ -130,6 +136,41 @@ public class Database {
         }
     }
 
+    public List<DataKladr> getDataKladr() {
+        String sql = "SELECT big_name, " +
+                "sm_name, " +
+                "code, " +
+                "postcode, " +
+                "code_ifns, " +
+                "code_ter_ifns, " +
+                "code_okato, " +
+                "status, " +
+                "status_sign " +
+                "FROM public.kladr;";
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+            List<DataKladr> dataKladrList = new ArrayList<>();
+            while (rs.next()) {
+                dataKladrList.add(new DataKladr(
+                        rs.getString(1),
+                        rs.getString(2),
+                        rs.getLong(3),
+                        rs.getLong(4),
+                        rs.getLong(5),
+                        rs.getLong(6),
+                        rs.getLong(7),
+                        rs.getLong(8),
+                        rs.getString(9)));
+            }
+            System.out.println("Считывание каталога kladr закончено");
+            return dataKladrList;
+        } catch (SQLException e) {
+            System.out.println("Connection Failed");
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     private String getInsertSQL(String tableDB) {
         switch (tableDB) {
@@ -147,5 +188,66 @@ public class Database {
                         "VALUES (";
         }
         return null;
+    }
+
+    public List<DataDocs> getDataDocs() {
+        String sql = "SELECT id, " +
+                "name, " +
+                "oiv, " +
+                "xsd_schemas, " +
+                "status_open, " +
+                "note, " +
+                "elec_doc, " +
+                "real_doc, " +
+                "status_sign, " +
+                "web_services " +
+                "FROM public.docs;";
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+            List<DataDocs> dataDocsList = new ArrayList<>();
+            while (rs.next()) {
+                dataDocsList.add(new DataDocs(
+                        rs.getLong(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getString(7),
+                        rs.getString(8),
+                        rs.getString(9),
+                        rs.getString(10)));
+            }
+            System.out.println("Считывание каталога DOCS закончено");
+            return dataDocsList;
+        } catch (SQLException e) {
+            System.out.println("Connection Failed");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<DataOIV> getDataOIV() {
+        String sql = "SELECT id, name, head_org, oiv, status_sign FROM public.oiv;";
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+            List<DataOIV> dataOIVList = new ArrayList<>();
+            while (rs.next()) {
+                dataOIVList.add(new DataOIV(
+                        rs.getLong(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5)));
+            }
+            System.out.println("Считывание каталога OIV закончено");
+            return dataOIVList;
+        } catch (SQLException e) {
+            System.out.println("Connection Failed");
+            e.printStackTrace();
+            return null;
+        }
     }
 }

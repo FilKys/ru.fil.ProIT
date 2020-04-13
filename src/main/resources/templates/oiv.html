@@ -1,0 +1,35 @@
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <link rel="stylesheet" type="text/css"
+          href="../static/css/menu.css" th:href="@{/css/menu.css}"/>
+</head>
+<body>
+<div class="dropdown">
+    <button class="dropbtn">Каталоги</button>
+    <div class="dropdown-content">
+        <a href="/kladr">kladr</a>
+        <a href="/docs">docs</a>
+        <a href="/oiv">oiv</a>
+    </div>
+</div>
+<form method="POST" enctype="multipart/form-data" action="/kladrAdd">
+    Файл для загрузки: <input type="file" name="file"> <input type="submit" value="Загрузить!">
+</form>
+<table border="1">
+    <tr>
+        <th>Код</th>
+        <th>Наименование</th>
+        <th>Головное подразделение</th>
+        <th>ОИВ</th>
+        <th>Состояние подписи</th>
+    </tr>
+    <tr th:each="oiv:${oivCat}">
+        <td th:utext="${oiv.id}">...</td>
+        <td th:utext="${oiv.name}">...</td>
+        <td th:utext="${oiv.headOrg}">...</td>
+        <td th:utext="${oiv.oiv}">...</td>
+        <td th:utext="${oiv.statusSign}">...</td>
+    </tr>
+</table>
+</body>
+</html>
