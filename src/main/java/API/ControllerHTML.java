@@ -3,6 +3,8 @@ package API;
 import API.Data.DataDocs;
 import API.Data.DataKladr;
 import API.Data.DataOIV;
+import jdk.jfr.Name;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,23 +22,44 @@ public class ControllerHTML {
 
     @RequestMapping(value = "/kladr", method = RequestMethod.GET)
     public String kladr(@RequestParam(name = "name", required = false, defaultValue = "World") String name, Model model) {
-        List<DataKladr> dataKladrList = db.getDataKladr();
+        List<DataKladr> dataKladrList = db.getKladr(0,null);
+        model.addAttribute("kladrCat", dataKladrList);
+        return "kladr";
+    }
+
+    @RequestMapping(value = "/kladr/column={col}&sort={type}", method = RequestMethod.GET)
+    public String kladrSort(@PathVariable("col") int col, @PathVariable("type") String type, Model model) {
+        List<DataKladr> dataKladrList = db.getKladr(col,type);
         model.addAttribute("kladrCat", dataKladrList);
         return "kladr";
     }
 
     @RequestMapping(value = "/docs", method = RequestMethod.GET)
     public String docs(@RequestParam(name = "name", required = false, defaultValue = "World") String name, Model model) {
-        List<DataDocs> dataDocsList = db.getDataDocs();
+        List<DataDocs> dataDocsList = db.getDocs(0,null);
         model.addAttribute("docsCat", dataDocsList);
         return "docs";
     }
 
+    @RequestMapping(value = "/docs/column={col}&sort={type}", method = RequestMethod.GET)
+    public String docsSort(@PathVariable("col") int col, @PathVariable("type") String type, Model model) {
+        List<DataDocs> dataDocsList = db.getDocs(col,type);
+        model.addAttribute("docsCat", dataDocsList);
+        return "kladr";
+    }
+
     @RequestMapping(value = "/oiv", method = RequestMethod.GET)
     public String oiv(@RequestParam(name = "name", required = false) String name, Model model) {
-        List<DataOIV> dataOIVList = db.getDataOIV();
+        List<DataOIV> dataOIVList = db.getOiv(0,null);
         model.addAttribute("oivCat", dataOIVList);
         return "oiv";
+    }
+//TODO Настроить сортировку
+    @RequestMapping(value = "/oiv", method = RequestMethod.GET)
+    public String oivSort(@Value("") String col, @Name("") String type, Model model) {
+//        List<DataOIV> dataOIVList = db.getOiv(col,type);
+//        model.addAttribute("oivCat", dataOIVList);
+        return "kladr";
     }
 
     @RequestMapping(value = "/kladrAdd", method = RequestMethod.POST)
