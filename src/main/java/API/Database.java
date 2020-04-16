@@ -1,6 +1,7 @@
 package API;
 
 
+import API.Data.DataCatalogs;
 import API.Data.DataDocs;
 import API.Data.DataKladr;
 import API.Data.DataOIV;
@@ -26,6 +27,7 @@ public class Database {
     static private final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/catalog";
     static private final String USER = "postgres";
     static private final String PASS = "123";
+    static private final int DELTA_PAGINATOR = 50;
 
     public void addInDB(File fileIn, String tableDB) throws SQLException {
         String typeFile = fileIn.getName().toLowerCase().substring(fileIn.getName().lastIndexOf('.'));
@@ -139,17 +141,46 @@ public class Database {
             return null;
         }
     }
-
-    public List<DataKladr> getKladr(int col, String type) {
-        if (col == 0) {
-            StringBuilder sql = new StringBuilder().append(getSelectSQL("kladr")).append(";");
-            return getDataKladr(sql);
-        } else {
-            StringBuilder sql = new StringBuilder().append(" ORDER BY ")
-                    .append(getNameColumn("kladr", col))
-                    .append(type);
-            return getDataKladr(sql);
+    public List<DataKladr> getKladr(int pagin, int col, String type, String likeText) {
+        StringBuilder sql = new StringBuilder()
+                .append(getSelectSQL("kladr"));
+        switch (type){
+            case "DESC":
+            case "ASC":
+                sql.append(" ORDER BY ")
+                        .append(getNameColumn("kladr", col))
+                        .append(type);
+                break;
+            case "START":
+                sql.append(" where ")
+                        .append(getNameColumn("kladr",col))
+                        .append(" like '")
+                        .append(likeText)
+                        .append("%'");
+                break;
+            case "CONTAINS":
+                sql.append(" where ")
+                        .append(getNameColumn("kladr",col))
+                        .append(" like '%")
+                        .append(likeText)
+                        .append("%'");
+                break;
+            case "FINISH":
+                sql.append(" where ")
+                        .append(getNameColumn("kladr",col))
+                        .append(" like '%")
+                        .append(likeText)
+                        .append("'");
+                break;
+            case "EQUALS":
+                sql.append(" where ")
+                        .append(getNameColumn("kladr",col))
+                        .append(" like '")
+                        .append(likeText)
+                        .append("'");
+                break;
         }
+        return getDataKladr(sql.append(paginationSQL(pagin)).append(";"));
     }
 
     private List<DataKladr> getDataKladr(StringBuilder sql) {
@@ -178,16 +209,46 @@ public class Database {
         }
     }
 
-    public List<DataDocs> getDocs(int col, String type) {
-        if (col == 0) {
-            StringBuilder sql = new StringBuilder().append(getSelectSQL("docs")).append(";");
-            return getDataDocs(sql);
-        } else {
-            StringBuilder sql = new StringBuilder().append(" ORDER BY ")
-                    .append(getNameColumn("docs", col))
-                    .append(type);
-            return getDataDocs(sql);
+    public List<DataDocs> getDocs(int pagin, int col, String type, String likeText) {
+        StringBuilder sql = new StringBuilder()
+                .append(getSelectSQL("docs"));
+        switch (type){
+            case "DESC":
+            case "ASC":
+                sql.append(" ORDER BY ")
+                        .append(getNameColumn("docs", col))
+                        .append(type);
+                break;
+            case "START":
+                sql.append(" where ")
+                        .append(getNameColumn("docs",col))
+                        .append(" like '")
+                        .append(likeText)
+                        .append("%'");
+                break;
+            case "CONTAINS":
+                sql.append(" where ")
+                        .append(getNameColumn("docs",col))
+                        .append(" like '%")
+                        .append(likeText)
+                        .append("%'");
+                break;
+            case "FINISH":
+                sql.append(" where ")
+                        .append(getNameColumn("docs",col))
+                        .append(" like '%")
+                        .append(likeText)
+                        .append("'");
+                break;
+            case "EQUALS":
+                sql.append(" where ")
+                        .append(getNameColumn("docs",col))
+                        .append(" like '")
+                        .append(likeText)
+                        .append("'");
+                break;
         }
+        return getDataDocs(sql.append(paginationSQL(pagin)).append(";"));
     }
 
     private List<DataDocs> getDataDocs(StringBuilder sql) {
@@ -217,16 +278,46 @@ public class Database {
         }
     }
 
-    public List<DataOIV> getOiv(int col, String type) {
-        if (col == 0) {
-            StringBuilder sql = new StringBuilder().append(getSelectSQL("oiv")).append(";");
-            return getDataOIV(sql);
-        } else {
-            StringBuilder sql = new StringBuilder().append(" ORDER BY ")
-                    .append(getNameColumn("oiv", col))
-                    .append(type);
-            return getDataOIV(sql);
+    public List<DataOIV> getOiv(int pagin, int col, String type, String likeText) {
+        StringBuilder sql = new StringBuilder()
+                .append(getSelectSQL("oiv"));
+        switch (type){
+            case "DESC":
+            case "ASC":
+                sql.append(" ORDER BY ")
+                        .append(getNameColumn("oiv", col))
+                        .append(type);
+                break;
+            case "START":
+                sql.append(" where ")
+                        .append(getNameColumn("oiv",col))
+                        .append(" like '")
+                        .append(likeText)
+                        .append("%'");
+                break;
+            case "CONTAINS":
+                sql.append(" where ")
+                        .append(getNameColumn("oiv",col))
+                        .append(" like '%")
+                        .append(likeText)
+                        .append("%'");
+                break;
+            case "FINISH":
+                sql.append(" where ")
+                        .append(getNameColumn("oiv",col))
+                        .append(" like '%")
+                        .append(likeText)
+                        .append("'");
+                break;
+            case "EQUALS":
+                sql.append(" where ")
+                        .append(getNameColumn("oiv",col))
+                        .append(" like '")
+                        .append(likeText)
+                        .append("'");
+                break;
         }
+        return getDataOIV(sql.append(paginationSQL(pagin)).append(";"));
     }
 
     private List<DataOIV> getDataOIV(StringBuilder sql) {
@@ -249,6 +340,18 @@ public class Database {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private String paginationSQL(int pagin) {
+        StringBuilder sb = new StringBuilder().append(" LIMIT ");
+        sb.append(DELTA_PAGINATOR);
+        int start = 0;
+        for (int i = 0; i < pagin-1; i++) {
+            start += DELTA_PAGINATOR;
+        }
+        sb.append(" OFFSET ");
+        sb.append(start);
+        return sb.toString();
     }
 
     private String getSelectSQL(String tableDB) {
@@ -305,65 +408,117 @@ public class Database {
             case "kladr":
                 switch (id) {
                     case 1:
-                        return "big_name";
+                        return "big_name ";
                     case 2:
-                        return "sm_name";
+                        return "sm_name ";
                     case 3:
-                        return "code";
+                        return "code ";
                     case 4:
-                        return "postcode";
+                        return "postcode ";
                     case 5:
-                        return "code_ifns";
+                        return "code_ifns ";
                     case 6:
-                        return "code_ter_ifns";
+                        return "code_ter_ifns ";
                     case 7:
-                        return "code_okato";
+                        return "code_okato ";
                     case 8:
-                        return "status";
+                        return "status ";
                     case 9:
-                        return "status_sign";
+                        return "status_sign ";
                 }
                 return "error";
             case "oiv":
                 switch (id) {
                     case 1:
-                        return "id";
+                        return "id ";
                     case 2:
-                        return "name";
+                        return "name ";
                     case 3:
-                        return "head_org";
+                        return "head_org ";
                     case 4:
-                        return "oiv";
+                        return "oiv ";
                     case 5:
-                        return "status_sign";
+                        return "status_sign ";
                 }
                 return "error";
             case "docs":
                 switch (id) {
                     case 1:
-                        return "id";
+                        return "id ";
                     case 2:
-                        return "name";
+                        return "name ";
                     case 3:
-                        return "oiv";
+                        return "oiv ";
                     case 4:
-                        return "xsd_schemas";
+                        return "xsd_schemas ";
                     case 5:
-                        return "web_services";
+                        return "web_services ";
                     case 6:
-                        return "status_open";
+                        return "status_open ";
                     case 7:
-                        return "note";
+                        return "note ";
                     case 8:
-                        return "elec_doc";
+                        return "elec_doc ";
                     case 9:
-                        return "real_doc";
+                        return "real_doc ";
                     case 10:
-                        return "status_sign";
+                        return "status_sign ";
                 }
                 return "error";
         }
         return null;
     }
 
+    public Integer getPaginator(String page) {
+        StringBuilder sql = new StringBuilder().append("SELECT count(*) FROM ");
+        switch (page) {
+            case "kladr":
+                sql.append(" public.kladr");
+                break;
+            case "docs":
+                sql.append(" public.docs");
+                break;
+            case "oiv":
+                sql.append(" public.oiv");
+                break;
+        }
+        if (sql.toString().contains("public")) {
+            try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
+                Statement statement = connection.createStatement();
+                ResultSet rs = statement.executeQuery(sql.toString());
+                int pagin = 0;
+                while (rs.next()) {
+                    pagin = rs.getInt(1);
+                }
+                return (int) Math.ceil((double) pagin / DELTA_PAGINATOR);
+            } catch (SQLException e) {
+                System.out.println("Connection Failed");
+                e.printStackTrace();
+                return null;
+            }
+        } else
+            return null;
+    }
+
+    public List<DataCatalogs> getMenu() {
+        List<DataCatalogs> dataCatalogsList = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement
+                    .executeQuery("SELECT id, name, link " +
+                            "FROM public.catalogs;");
+            while (rs.next()) {
+                dataCatalogsList.add(new DataCatalogs(
+                        rs.getLong("id"),
+                        rs.getString("name"),
+                        rs.getString("link")
+                ));
+            }
+            return dataCatalogsList;
+        } catch (SQLException e) {
+            System.out.println("Connection Failed");
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
