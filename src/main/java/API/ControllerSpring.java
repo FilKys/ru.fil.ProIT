@@ -4,21 +4,14 @@ import API.Data.DataCatalogs;
 import API.Data.DataDocs;
 import API.Data.DataKladr;
 import API.Data.DataOIV;
-import jdk.jfr.Name;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import javax.annotation.PostConstruct;
-import java.io.*;
 import java.util.List;
-import java.util.Objects;
 
-
+@EnableSwagger2
 @RestController
-public class ControllerHTML {
+public class ControllerSpring {
 
     private Database db = new Database();
     private List<DataCatalogs> dataCatalogsList;
@@ -35,8 +28,8 @@ public class ControllerHTML {
     }
 
     @RequestMapping(value = "/kladr/pagin={pagin}", method = RequestMethod.GET)
-    public List<DataKladr> kladr(@PathVariable("pagin") int pagin) {
-        return db.getKladr(pagin, 0, "", null);
+    public List<DataKladr> kladrDataPagin(@PathVariable("pagin") int pagin) {
+        return db.getKladr(pagin-1, 0, "", null);
     }
 
     @RequestMapping(value = "/kladr/column={col}&sort={type}&likeText={likeText}&pagin={pagin}", method = RequestMethod.GET)

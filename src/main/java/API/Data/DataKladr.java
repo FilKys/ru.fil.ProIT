@@ -1,8 +1,11 @@
 package API.Data;
 
+import java.sql.Timestamp;
+
 public class DataKladr {
     private String bigName,smallName,statusSign;
     private Long code,postCode,codeIFNS,codeTerIFNS,codeOKATO,status;
+    private Timestamp timeChange;
 
 
     public DataKladr(String bigName,
@@ -13,7 +16,8 @@ public class DataKladr {
                      long codeTerIFNS,
                      long codeOKATO,
                      long status,
-                     String statusSign) {
+                     String statusSign,
+                     Timestamp timeChange) {
         this.bigName=bigName;
         this.smallName=smallName;
         this.code=code;
@@ -23,6 +27,7 @@ public class DataKladr {
         this.codeOKATO=codeOKATO;
         this.status=status;
         this.statusSign=statusSign;
+        this.timeChange=timeChange;
     }
 
     public String getBigName() {
@@ -59,5 +64,9 @@ public class DataKladr {
 
     public String getStatusSign() {
         return statusSign;
+    }
+
+    public Timestamp getTimeChange() {
+        return timeChange;
     }
 }

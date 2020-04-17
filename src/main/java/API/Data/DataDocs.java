@@ -1,9 +1,12 @@
 package API.Data;
 
+import java.sql.Timestamp;
+
 public class DataDocs {
     private String name, oiv, xsdSchemas, statusOpen,
             note, elecDoc, realDoc, statusSign, webServices;
     private Long id;
+    private Timestamp timeChange;
 
 
     public DataDocs(long id,
@@ -15,7 +18,8 @@ public class DataDocs {
                     String elecDoc,
                     String realDoc,
                     String statusSign,
-                    String webServices) {
+                    String webServices,
+                    Timestamp timeChange) {
         this.id = id;
         this.name = name;
         this.oiv = oiv;
@@ -26,6 +30,7 @@ public class DataDocs {
         this.realDoc = realDoc;
         this.statusSign = statusSign;
         this.webServices = webServices;
+        this.timeChange = timeChange;
     }
 
     public Long getId() {

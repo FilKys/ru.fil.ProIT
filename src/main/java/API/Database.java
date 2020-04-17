@@ -141,46 +141,14 @@ public class Database {
             return null;
         }
     }
+
     public List<DataKladr> getKladr(int pagin, int col, String type, String likeText) {
         StringBuilder sql = new StringBuilder()
-                .append(getSelectSQL("kladr"));
-        switch (type){
-            case "DESC":
-            case "ASC":
-                sql.append(" ORDER BY ")
-                        .append(getNameColumn("kladr", col))
-                        .append(type);
-                break;
-            case "START":
-                sql.append(" where ")
-                        .append(getNameColumn("kladr",col))
-                        .append(" like '")
-                        .append(likeText)
-                        .append("%'");
-                break;
-            case "CONTAINS":
-                sql.append(" where ")
-                        .append(getNameColumn("kladr",col))
-                        .append(" like '%")
-                        .append(likeText)
-                        .append("%'");
-                break;
-            case "FINISH":
-                sql.append(" where ")
-                        .append(getNameColumn("kladr",col))
-                        .append(" like '%")
-                        .append(likeText)
-                        .append("'");
-                break;
-            case "EQUALS":
-                sql.append(" where ")
-                        .append(getNameColumn("kladr",col))
-                        .append(" like '")
-                        .append(likeText)
-                        .append("'");
-                break;
-        }
-        return getDataKladr(sql.append(paginationSQL(pagin)).append(";"));
+                .append(getSelectSQL("kladr"))
+                .append(getSQLSort(col,"kladr","type",likeText))
+                .append(paginationSQL(pagin))
+                .append(";");
+        return getDataKladr(sql);
     }
 
     private List<DataKladr> getDataKladr(StringBuilder sql) {
@@ -198,7 +166,8 @@ public class Database {
                         rs.getLong(6),
                         rs.getLong(7),
                         rs.getLong(8),
-                        rs.getString(9)));
+                        rs.getString(9),
+                        rs.getTimestamp(10)));
             }
             System.out.println("Считывание каталога kladr закончено");
             return dataKladrList;
@@ -211,44 +180,11 @@ public class Database {
 
     public List<DataDocs> getDocs(int pagin, int col, String type, String likeText) {
         StringBuilder sql = new StringBuilder()
-                .append(getSelectSQL("docs"));
-        switch (type){
-            case "DESC":
-            case "ASC":
-                sql.append(" ORDER BY ")
-                        .append(getNameColumn("docs", col))
-                        .append(type);
-                break;
-            case "START":
-                sql.append(" where ")
-                        .append(getNameColumn("docs",col))
-                        .append(" like '")
-                        .append(likeText)
-                        .append("%'");
-                break;
-            case "CONTAINS":
-                sql.append(" where ")
-                        .append(getNameColumn("docs",col))
-                        .append(" like '%")
-                        .append(likeText)
-                        .append("%'");
-                break;
-            case "FINISH":
-                sql.append(" where ")
-                        .append(getNameColumn("docs",col))
-                        .append(" like '%")
-                        .append(likeText)
-                        .append("'");
-                break;
-            case "EQUALS":
-                sql.append(" where ")
-                        .append(getNameColumn("docs",col))
-                        .append(" like '")
-                        .append(likeText)
-                        .append("'");
-                break;
-        }
-        return getDataDocs(sql.append(paginationSQL(pagin)).append(";"));
+                .append(getSelectSQL("docs"))
+                .append(getSQLSort(col,"docs","type",likeText))
+                .append(paginationSQL(pagin))
+                .append(";");
+        return getDataDocs(sql);
     }
 
     private List<DataDocs> getDataDocs(StringBuilder sql) {
@@ -267,7 +203,8 @@ public class Database {
                         rs.getString(7),
                         rs.getString(8),
                         rs.getString(9),
-                        rs.getString(10)));
+                        rs.getString(10),
+                        rs.getTimestamp(11)));
             }
             System.out.println("Считывание каталога DOCS закончено");
             return dataDocsList;
@@ -280,44 +217,52 @@ public class Database {
 
     public List<DataOIV> getOiv(int pagin, int col, String type, String likeText) {
         StringBuilder sql = new StringBuilder()
-                .append(getSelectSQL("oiv"));
+                .append(getSelectSQL("oiv"))
+                .append(getSQLSort(col,"oiv","type",likeText))
+                .append(paginationSQL(pagin))
+                .append(";");
+         return getDataOIV(sql);
+    }
+
+    private StringBuilder getSQLSort(int col, String table, String type, String likeText){
+        StringBuilder sql = new StringBuilder();
         switch (type){
             case "DESC":
             case "ASC":
                 sql.append(" ORDER BY ")
-                        .append(getNameColumn("oiv", col))
+                        .append(getNameColumn(table, col))
                         .append(type);
                 break;
             case "START":
                 sql.append(" where ")
-                        .append(getNameColumn("oiv",col))
+                        .append(getNameColumn(table,col))
                         .append(" like '")
                         .append(likeText)
                         .append("%'");
                 break;
             case "CONTAINS":
                 sql.append(" where ")
-                        .append(getNameColumn("oiv",col))
+                        .append(getNameColumn(table,col))
                         .append(" like '%")
                         .append(likeText)
                         .append("%'");
                 break;
             case "FINISH":
                 sql.append(" where ")
-                        .append(getNameColumn("oiv",col))
+                        .append(getNameColumn(table,col))
                         .append(" like '%")
                         .append(likeText)
                         .append("'");
                 break;
             case "EQUALS":
                 sql.append(" where ")
-                        .append(getNameColumn("oiv",col))
+                        .append(getNameColumn(table,col))
                         .append(" like '")
                         .append(likeText)
                         .append("'");
                 break;
         }
-        return getDataOIV(sql.append(paginationSQL(pagin)).append(";"));
+        return sql;
     }
 
     private List<DataOIV> getDataOIV(StringBuilder sql) {
@@ -331,7 +276,8 @@ public class Database {
                         rs.getString(2),
                         rs.getString(3),
                         rs.getString(4),
-                        rs.getString(5)));
+                        rs.getString(5),
+                        rs.getTimestamp(6)));
             }
             System.out.println("Считывание каталога OIV закончено");
             return dataOIVList;
@@ -365,10 +311,11 @@ public class Database {
                         "code_ter_ifns, " +
                         "code_okato, " +
                         "status, " +
-                        "status_sign " +
+                        "status_sign, " +
+                        "time_change "+
                         "FROM public.kladr";
             case "oiv":
-                return "SELECT id, name, head_org, oiv, status_sign FROM public.oiv";
+                return "SELECT id, name, head_org, oiv, status_sign, time_change FROM public.oiv";
             case "docs":
                 return "SELECT id, " +
                         "name, " +
@@ -379,7 +326,8 @@ public class Database {
                         "elec_doc, " +
                         "real_doc, " +
                         "status_sign, " +
-                        "web_services " +
+                        "web_services, " +
+                        "time_change "+
                         "FROM public.docs";
         }
         return null;
@@ -425,6 +373,8 @@ public class Database {
                         return "status ";
                     case 9:
                         return "status_sign ";
+                    case 10:
+                        return "time_change ";
                 }
                 return "error";
             case "oiv":
@@ -439,6 +389,8 @@ public class Database {
                         return "oiv ";
                     case 5:
                         return "status_sign ";
+                    case 6:
+                        return "time_change ";
                 }
                 return "error";
             case "docs":
@@ -463,6 +415,8 @@ public class Database {
                         return "real_doc ";
                     case 10:
                         return "status_sign ";
+                    case 11:
+                        return "time_change ";
                 }
                 return "error";
         }
