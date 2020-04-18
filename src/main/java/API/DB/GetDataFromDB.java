@@ -53,7 +53,7 @@ public class GetDataFromDB {
                 break;
         }
         if (sql.toString().contains("public")) {
-            return db.getDataPaginator(sql.toString());
+            return (int) Math.ceil((double) db.getDataPaginator(sql.toString())/ DELTA_PAGINATOR);
         } else
             return null;
     }

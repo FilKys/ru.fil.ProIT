@@ -27,8 +27,6 @@ class Database {
     static private final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/catalog";
     static private final String USER = "postgres";
     static private final String PASS = "123";
-    static private final int DELTA_PAGINATOR = 50;
-
     public void addInDB(File fileIn, String tableDB) throws SQLException {
         String typeFile = fileIn.getName().toLowerCase().substring(fileIn.getName().lastIndexOf('.'));
         StringBuilder sql = new StringBuilder();
@@ -238,7 +236,7 @@ class Database {
         }
     }
 
-    protected Integer getDataPaginator(String sql) {
+    protected int getDataPaginator(String sql) {
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql);
@@ -246,11 +244,11 @@ class Database {
             while (rs.next()) {
                 pagin = rs.getInt(1);
             }
-            return (int) Math.ceil((double) pagin / DELTA_PAGINATOR);
+            return pagin;
         } catch (SQLException e) {
             System.out.println("Connection Failed");
             e.printStackTrace();
-            return null;
+            return 0;
         }
     }
 
