@@ -236,7 +236,7 @@ class Database {
         }
     }
 
-    protected int getDataPaginator(String sql) {
+    protected int getCountRows(String sql) {
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql);
