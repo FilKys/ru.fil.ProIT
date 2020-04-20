@@ -4,6 +4,7 @@ import API.Data.DataCatalogs;
 import API.Data.DataDocs;
 import API.Data.DataKladr;
 import API.Data.DataOIV;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class GetDataFromDB {
         return db.getDataOIV(sql);
     }
 
-    public Integer getPaginator(String page) {
+    public Integer getCountPages(String page) {
         StringBuilder sql = new StringBuilder().append("SELECT count(*) FROM ");
         switch (page) {
             case "kladr":
