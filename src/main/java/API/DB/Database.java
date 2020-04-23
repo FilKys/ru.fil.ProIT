@@ -1,10 +1,7 @@
 package API.DB;
 
 
-import API.Data.DataCatalogs;
-import API.Data.DataDocs;
-import API.Data.DataKladr;
-import API.Data.DataOIV;
+import API.Data.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -26,6 +23,7 @@ class Database {
     static private final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/catalog";
     static private final String USER = "postgres";
     static private final String PASS = "123";
+
     public void addInDB(File fileIn, String tableDB) throws SQLException {
         String typeFile = fileIn.getName().toLowerCase().substring(fileIn.getName().lastIndexOf('.'));
         StringBuilder sql = new StringBuilder();
@@ -251,13 +249,12 @@ class Database {
         }
     }
 
-    protected List<DataCatalogs> getDataMenu() {
+    protected List<DataCatalogs> getDataMenu(String sql) {
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
             List<DataCatalogs> dataCatalogsList = new ArrayList<>();
             Statement statement = connection.createStatement();
             ResultSet rs = statement
-                    .executeQuery("SELECT id, name, link " +
-                            "FROM public.catalogs;");
+                    .executeQuery(sql);
             while (rs.next()) {
                 dataCatalogsList.add(new DataCatalogs(
                         rs.getLong("id"),
@@ -266,6 +263,27 @@ class Database {
                 ));
             }
             return dataCatalogsList;
+        } catch (SQLException e) {
+            System.out.println("Connection Failed");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<User> getUsers(String sql) {
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            List<User> userList = new ArrayList<>();
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+            while (rs.next()) {
+                userList.add(new User(
+                        rs.getLong("id"),
+                        rs.getString("login"),
+                        rs.getString("pass"),
+                        rs.getString("role")
+                ));
+            }
+            return userList;
         } catch (SQLException e) {
             System.out.println("Connection Failed");
             e.printStackTrace();

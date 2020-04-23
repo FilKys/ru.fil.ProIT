@@ -1,9 +1,6 @@
 package API.DB;
 
-import API.Data.DataCatalogs;
-import API.Data.DataDocs;
-import API.Data.DataKladr;
-import API.Data.DataOIV;
+import API.Data.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -60,7 +57,8 @@ public class GetDataFromDB {
     }
 
     public List<DataCatalogs> getMenu() {
-        return db.getDataMenu();
+        return db.getDataMenu("SELECT id, name, link " +
+                "FROM public.catalogs;");
     }
 
     private String getSelectSQL(String tableDB) {
@@ -219,5 +217,10 @@ public class GetDataFromDB {
                 return "error";
         }
         return null;
+    }
+
+    public List<User> getUsers() {
+        String sql = "SELECT id, login, pass, role FROM public.users";
+        return db.getUsers(sql);
     }
 }
