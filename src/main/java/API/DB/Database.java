@@ -23,7 +23,7 @@ class Database {
     static private final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/catalog";
     static private final String USER = "postgres";
     static private final String PASS = "123";
-
+/*//Добавление файлов в БД
     public void addInDB(File fileIn, String tableDB) throws SQLException {
         String typeFile = fileIn.getName().toLowerCase().substring(fileIn.getName().lastIndexOf('.'));
         StringBuilder sql = new StringBuilder();
@@ -136,6 +136,7 @@ class Database {
             return null;
         }
     }
+    */
 
     private String getInsertSQL(String tableDB) {
         switch (tableDB) {

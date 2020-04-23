@@ -7,6 +7,7 @@ import API.Data.DataKladr;
 import API.Data.DataOIV;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.util.List;
 
 @RestController
@@ -74,32 +75,6 @@ public class ControllerSpring {
             return getData.getOiv(pagin, col, type.toUpperCase(), likeText);
         else throw new Exception("Не правильно задана страница, номер старницы должна быть > 0 ");
     }
-//
-//    @RequestMapping(value = "/kladrAdd", method = RequestMethod.POST)
-//    public @ResponseBody
-//    String uploadDocs(@RequestParam("file") MultipartFile file, Model model) {
-//        File fileIn = new File(Objects.requireNonNull(file.getOriginalFilename()));
-//        String upload = "";
-//        if (!file.isEmpty()) {
-//            try {
-//                byte[] bytes = file.getBytes();
-//                BufferedOutputStream stream =
-//                        new BufferedOutputStream(new FileOutputStream(fileIn));
-//                stream.write(bytes);
-//                stream.close();
-//                db.addInDB(fileIn, "kladr");
-//                fileIn.delete();
-//                upload = "Файл загружен";
-//
-//            } catch (Exception e) {
-//                upload = "Вам не удалось загрузить файл";
-//            }
-//        } else {
-//            upload = "Вам не удалось загрузить файл";
-//        }
-//        model.addAttribute("uploadFile", upload);
-////        return "redirect:/kladr";
-//        return "kladr";
-//    }
 
-}
+
+    }
