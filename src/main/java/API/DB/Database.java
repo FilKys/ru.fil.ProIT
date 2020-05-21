@@ -2,6 +2,8 @@ package API.DB;
 
 
 import API.Data.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -28,6 +30,8 @@ import java.util.List;
 @Service
 @PropertySource("classpath:db.properties")
 class Database {
+
+    private static Logger logger = LogManager.getLogger(Database.class);
 
     @Value("${db.url}")
     private String DB_URL;
@@ -149,7 +153,7 @@ class Database {
             return null;
         }
     }
-    */
+
 
     private String getInsertSQL(String tableDB) {
         switch (tableDB) {
@@ -168,12 +172,15 @@ class Database {
         }
         return null;
     }
+*/
 
     protected List<DataKladr> getDataKladr(StringBuilder sql) {
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            logger.info("Connection to db - completed");
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql.toString());
             List<DataKladr> dataKladrList = new ArrayList<>();
+            logger.info("Read catalog KLADR - start");
             while (rs.next()) {
                 dataKladrList.add(new DataKladr(
                         rs.getString(1),
@@ -187,10 +194,10 @@ class Database {
                         rs.getString(9),
                         rs.getTimestamp(10)));
             }
-            System.out.println("Считывание каталога kladr закончено");
+            logger.info("Read catalog KLADR - finish");
             return dataKladrList;
         } catch (SQLException e) {
-            System.out.println("Connection Failed");
+            logger.error("Connection Failed: "+e.getStackTrace());
             e.printStackTrace();
             return null;
         }
@@ -198,9 +205,11 @@ class Database {
 
     protected List<DataDocs> getDataDocs(StringBuilder sql) {
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            logger.info("Connection to db - completed");
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql.toString());
             List<DataDocs> dataDocsList = new ArrayList<>();
+            logger.info("Read catalog DOCS - start");
             while (rs.next()) {
                 dataDocsList.add(new DataDocs(
                         rs.getLong(1),
@@ -215,10 +224,10 @@ class Database {
                         rs.getString(10),
                         rs.getTimestamp(11)));
             }
-            System.out.println("Считывание каталога DOCS закончено");
+            logger.info("Read catalog DOCS - finish");
             return dataDocsList;
         } catch (SQLException e) {
-            System.out.println("Connection Failed");
+            logger.error("Connection Failed: "+e.getStackTrace());
             e.printStackTrace();
             return null;
         }
@@ -226,9 +235,11 @@ class Database {
 
     protected List<DataOIV> getDataOIV(StringBuilder sql) {
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            logger.info("Connection to db - completed");
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql.toString());
             List<DataOIV> dataOIVList = new ArrayList<>();
+            logger.info("Read catalog OIV - start");
             while (rs.next()) {
                 dataOIVList.add(new DataOIV(
                         rs.getLong(1),
@@ -238,10 +249,10 @@ class Database {
                         rs.getString(5),
                         rs.getTimestamp(6)));
             }
-            System.out.println("Считывание каталога OIV закончено");
+            logger.info("Read catalog OIV - finish");
             return dataOIVList;
         } catch (SQLException e) {
-            System.out.println("Connection Failed");
+            logger.error("Connection Failed: "+e.getStackTrace());
             e.printStackTrace();
             return null;
         }
@@ -249,15 +260,18 @@ class Database {
 
     protected int getCountRows(String sql) {
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            logger.info("Connection to db - completed");
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql);
             int pagin = 0;
+            logger.info("Read data count rows - start");
             while (rs.next()) {
                 pagin = rs.getInt(1);
             }
+            logger.info("Read data count rows - stop");
             return pagin;
         } catch (SQLException e) {
-            System.out.println("Connection Failed");
+            logger.error("Connection Failed: "+e.getStackTrace());
             e.printStackTrace();
             return 0;
         }
@@ -265,10 +279,12 @@ class Database {
 
     protected List<DataCatalogs> getDataMenu(String sql) {
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            logger.info("Connection to db - completed");
             List<DataCatalogs> dataCatalogsList = new ArrayList<>();
             Statement statement = connection.createStatement();
             ResultSet rs = statement
                     .executeQuery(sql);
+            logger.info("Read data menu - start");
             while (rs.next()) {
                 dataCatalogsList.add(new DataCatalogs(
                         rs.getLong("id"),
@@ -276,9 +292,10 @@ class Database {
                         rs.getString("link")
                 ));
             }
+            logger.info("Read data menu - stop");
             return dataCatalogsList;
         } catch (SQLException e) {
-            System.out.println("Connection Failed");
+            logger.error("Connection Failed: "+e.getStackTrace());
             e.printStackTrace();
             return null;
         }
@@ -286,9 +303,11 @@ class Database {
 
     public List<User> getUsers(String sql) {
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            logger.info("Connection to db - completed");
             List<User> userList = new ArrayList<>();
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql);
+            logger.info("Read users - start");
             while (rs.next()) {
                 userList.add(new User(
                         rs.getLong("id"),
@@ -297,9 +316,10 @@ class Database {
                         rs.getString("role")
                 ));
             }
+            logger.info("Read users - stop");
             return userList;
         } catch (SQLException e) {
-            System.out.println("Connection Failed");
+            logger.error("Connection Failed: "+e.getStackTrace());
             e.printStackTrace();
             return null;
         }
