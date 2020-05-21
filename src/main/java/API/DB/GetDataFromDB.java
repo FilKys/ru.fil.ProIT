@@ -1,6 +1,9 @@
 package API.DB;
 
+import API.ControllerSpring;
 import API.Data.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +13,7 @@ import java.util.List;
 public class GetDataFromDB {
 
     static private final int DELTA_PAGINATOR = 50;
+    private static Logger logger = LogManager.getLogger(GetDataFromDB.class);
 
     @Autowired
     private Database db = new Database();
@@ -20,6 +24,7 @@ public class GetDataFromDB {
                 .append(getSQLSort(col,"kladr",type,likeText))
                 .append(paginationSQL(pagin))
                 .append(";");
+        logger.info("Create SQL for getKladr - "+sql);
         return db.getDataKladr(sql);
     }
 
@@ -29,6 +34,7 @@ public class GetDataFromDB {
                 .append(getSQLSort(col,"docs",type,likeText))
                 .append(paginationSQL(pagin))
                 .append(";");
+        logger.info("Create SQL for getDocs - "+sql);
         return db.getDataDocs(sql);
     }
 
@@ -38,6 +44,7 @@ public class GetDataFromDB {
                 .append(getSQLSort(col,"oiv",type,likeText))
                 .append(paginationSQL(pagin))
                 .append(";");
+        logger.info("Create SQL for getOiv - "+sql);
         return db.getDataOIV(sql);
     }
 
@@ -55,12 +62,15 @@ public class GetDataFromDB {
                 break;
         }
         if (sql.toString().contains("public")) {
+            logger.info("Create SQL for getCountPages - "+sql);
             return (int) Math.ceil((double) db.getCountRows(sql.toString())/ DELTA_PAGINATOR);
         } else
+            logger.error("WARNING!! No correct create SQL for getCountPages - "+sql);
             return null;
     }
 
     public List<DataCatalogs> getMenu() {
+        logger.info("Create SQL for getMenu - SELECT id, name, link FROM public.catalogs;");
         return db.getDataMenu("SELECT id, name, link " +
                 "FROM public.catalogs;");
     }
@@ -225,6 +235,7 @@ public class GetDataFromDB {
 
     public List<User> getUsers() {
         String sql = "SELECT id, login, pass, role FROM public.users";
+        logger.info("Create SQL for getUsers - "+sql);
         return db.getUsers(sql);
     }
 }
