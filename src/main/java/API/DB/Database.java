@@ -6,7 +6,14 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,11 +25,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
+@Service
+@PropertySource("classpath:db.properties")
 class Database {
-    static private final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/catalog";
-    static private final String USER = "postgres";
-    static private final String PASS = "123";
+
+    @Value("${db.url}")
+    private String DB_URL;
+    @Value("${db.user}")
+    private String USER;
+    @Value("${db.pass}")
+    private String PASS;
+
 /*//Добавление файлов в БД
     public void addInDB(File fileIn, String tableDB) throws SQLException {
         String typeFile = fileIn.getName().toLowerCase().substring(fileIn.getName().lastIndexOf('.'));

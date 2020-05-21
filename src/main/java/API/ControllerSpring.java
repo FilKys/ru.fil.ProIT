@@ -5,6 +5,7 @@ import API.Data.DataCatalogs;
 import API.Data.DataDocs;
 import API.Data.DataKladr;
 import API.Data.DataOIV;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 public class ControllerSpring {
 
+    @Autowired
     private GetDataFromDB getData = new GetDataFromDB();
 
     @RequestMapping(value = "/getMenu", method = RequestMethod.GET)

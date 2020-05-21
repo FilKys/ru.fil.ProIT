@@ -2,12 +2,16 @@ package API.DB;
 
 import API.Data.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class GetDataFromDB {
 
     static private final int DELTA_PAGINATOR = 50;
+
+    @Autowired
     private Database db = new Database();
 
     public List<DataKladr> getKladr(int pagin, int col, String type, String likeText){
