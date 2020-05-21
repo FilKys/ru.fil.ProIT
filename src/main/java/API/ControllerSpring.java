@@ -35,10 +35,13 @@ public class ControllerSpring {
 
     @RequestMapping(value = "/kladr/pagin={pagin}", method = RequestMethod.GET)
     public List<DataKladr> kladrDataPagin(@PathVariable("pagin") int pagin) throws Exception {
-        logger.info("Request page "+pagin+" for KLADR");
+        logger.info("Request page " + pagin + " for KLADR");
         if (pagin > 0)
             return getData.getKladr(pagin, 0, "", null);
-        else throw new Exception("Не правильно задана страница, номер старницы должна быть > 0 ");
+        else {
+            logger.error("WARNING!  Paginator < 0");
+            throw new Exception("WARNING!  Paginator < 0 ");
+        }
     }
 
     @RequestMapping(value = "/kladr/column={col}&sort={type}&likeText={likeText}&pagin={pagin}", method = RequestMethod.GET)
@@ -46,19 +49,25 @@ public class ControllerSpring {
                                      @PathVariable("type") String type,
                                      @PathVariable("pagin") int pagin,
                                      @PathVariable("likeText") String likeText) throws Exception {
-        logger.info("Request sort KLADR for page "+pagin+". Parameters sort: col="+col+
-                ", type="+type+", likeText="+likeText);
+        logger.info("Request sort KLADR for page " + pagin + ". Parameters sort: col=" + col +
+                ", type=" + type + ", likeText=" + likeText);
         if (pagin > 0)
             return getData.getKladr(pagin, col, type.toUpperCase(), likeText);
-        else throw new Exception("Не правильно задана страница, номер старницы должна быть > 0 ");
+        else {
+            logger.error("WARNING!  Paginator < 0");
+            throw new Exception("WARNING!  Paginator < 0 ");
+        }
     }
 
     @RequestMapping(value = "/docs/pagin={pagin}", method = RequestMethod.GET)
     public List<DataDocs> docs(@PathVariable("pagin") int pagin) throws Exception {
-        logger.info("Request page "+pagin+" for DOCS");
+        logger.info("Request page " + pagin + " for DOCS");
         if (pagin > 0)
             return getData.getDocs(pagin, 0, "", null);
-        else throw new Exception("Не правильно задана страница, номер старницы должна быть > 0 ");
+        else {
+            logger.error("WARNING!  Paginator < 0");
+            throw new Exception("WARNING!  Paginator < 0 ");
+        }
     }
 
     @RequestMapping(value = "/docs/column={col}&sort={type}&likeText={likeText}&pagin={pagin}", method = RequestMethod.GET)
@@ -66,19 +75,25 @@ public class ControllerSpring {
                                    @PathVariable("type") String type,
                                    @PathVariable("pagin") int pagin,
                                    @PathVariable("likeText") String likeText) throws Exception {
-        logger.info("Request sort DOCS for page "+pagin+". Parameters sort: col="+col+
-                ", type="+type+", likeText="+likeText);
+        logger.info("Request sort DOCS for page " + pagin + ". Parameters sort: col=" + col +
+                ", type=" + type + ", likeText=" + likeText);
         if (pagin > 0)
             return getData.getDocs(pagin, col, type.toUpperCase(), likeText);
-        else throw new Exception("Не правильно задана страница, номер старницы должна быть > 0 ");
+        else {
+            logger.error("WARNING!  Paginator < 0");
+            throw new Exception("WARNING!  Paginator < 0 ");
+        }
     }
 
     @RequestMapping(value = "/oiv/pagin={pagin}", method = RequestMethod.GET)
     public List<DataOIV> oiv(@PathVariable("pagin") int pagin) throws Exception {
-        logger.info("Request page "+pagin+" for DOCS");
+        logger.info("Request page " + pagin + " for DOCS");
         if (pagin > 0)
             return getData.getOiv(pagin, 0, "", null);
-        else throw new Exception("Не правильно задана страница, номер старницы должна быть > 0 ");
+        else {
+            logger.error("WARNING!  Paginator < 0");
+            throw new Exception("WARNING!  Paginator < 0 ");
+        }
     }
 
     @RequestMapping(value = "/oiv/column={col}&sort={type}&likeText={likeText}&pagin={pagin}", method = RequestMethod.GET)
@@ -86,11 +101,14 @@ public class ControllerSpring {
                                  @PathVariable("type") String type,
                                  @PathVariable("pagin") int pagin,
                                  @PathVariable("likeText") String likeText) throws Exception {
-        logger.info("Request sort OIV for page "+pagin+". Parameters sort: col="+col+
-                ", type="+type+", likeText="+likeText);
+        logger.info("Request sort OIV for page " + pagin + ". Parameters sort: col=" + col +
+                ", type=" + type + ", likeText=" + likeText);
         if (pagin > 0)
             return getData.getOiv(pagin, col, type.toUpperCase(), likeText);
-        else throw new Exception("Не правильно задана страница, номер старницы должна быть > 0 ");
+        else {
+            logger.error("WARNING!  Paginator < 0");
+            throw new Exception("WARNING!  Paginator < 0 ");
+        }
     }
 
 
