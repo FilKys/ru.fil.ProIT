@@ -1,5 +1,6 @@
 package API;
 
+import API.DB.AddDataInDB;
 import API.DB.GetDataFromDB;
 import API.Data.DataCatalogs;
 import API.Data.DataDocs;
@@ -9,17 +10,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
-public class ControllerSpring {
+public class APIController {
 
-    private static Logger logger = LogManager.getLogger(ControllerSpring.class);
+    private static Logger logger = LogManager.getLogger(APIController.class);
 
     @Autowired
     private GetDataFromDB getData = new GetDataFromDB();
+    @Autowired
+    private AddDataInDB addDataInDB = new AddDataInDB();
 
     @RequestMapping(value = "/getMenu", method = RequestMethod.GET)
     private List<DataCatalogs> getMenu() {
@@ -111,5 +115,21 @@ public class ControllerSpring {
         }
     }
 
+    @RequestMapping(value = "/add/user/login={login}&pass={pass}&role={role}",
+            method = RequestMethod.GET)
+    private String addUser(@PathVariable("login") String login,
+                           @PathVariable("pass") String pass,
+                           @PathVariable("role") String role) {
+        logger.info("Add user - login=" + login + ", pass=" + pass + ", role=" + role);
+        return addDataInDB.addUser(login, pass, role);
+    }
 
+    @RequestMapping(value = "/add/uploadFile/table={nameTable}",
+            method = RequestMethod.GET)
+//    private String addFile(@RequestParam("file") MultipartFile file,
+    private String addFile(@PathVariable("nameTable") String nameTable) throws SQLException {
+        logger.info("Add data from file to " + nameTable);
+        MultipartFile file = null;
+        return addDataInDB.addInDBFromFile(file, nameTable);
+    }
 }

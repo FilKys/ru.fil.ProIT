@@ -1,24 +1,21 @@
-package API;
+package API.Config;
 
 import API.DB.GetDataFromDB;
 import API.Data.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static Logger logger = LogManager.getLogger(SecurityConfiguration.class);
+    private static Logger logger = LogManager.getLogger(SecurityConfig.class);
 
     @Autowired
     private GetDataFromDB db = new GetDataFromDB();
@@ -27,8 +24,8 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         logger.info("Init users - start");
         List<User> usersList = db.getUsers();
-        for (User user:usersList){
-            for (String roles:user.getRoleList()){
+        for (User user : usersList) {
+            for (String roles : user.getRoleList()) {
                 auth.inMemoryAuthentication()
                         .withUser(user.getLogin()).password(user.getPass()).roles(roles);
             }
@@ -41,12 +38,11 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.httpBasic()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/kladr/**").access("hasRole('UserKladr') or hasRole('Admin')")
-                .antMatchers("/oiv/**").access("hasRole('UserOiv') or hasRole('Admin')")
-                .antMatchers("/docs/**").access("hasRole('UserDocs') or hasRole('Admin')")
-                .antMatchers("/v2/api-docs",
-                        "/swagger-ui.html#/**").access("hasRole('Admin')")
+                .antMatchers("/kladr/**").access("hasRole('UserKladr')")
+                .antMatchers("/oiv/**").access("hasRole('UserOiv')")
+                .antMatchers("/docs/**").access("hasRole('UserDocs')")
+                .antMatchers("/**").access("hasRole('Admin')")
         ;
-        logger.info("Init roles - complit");
+        logger.info("Init roles - completed");
     }
 }
