@@ -126,10 +126,9 @@ public class APIController {
 
     @RequestMapping(value = "/add/uploadFile/table={nameTable}",
             method = RequestMethod.GET)
-//    private String addFile(@RequestParam("file") MultipartFile file,
-    private String addFile(@PathVariable("nameTable") String nameTable) throws SQLException {
+    private String addFile(@RequestParam("file") MultipartFile file,
+                           @PathVariable("nameTable") String nameTable) throws SQLException {
         logger.info("Add data from file to " + nameTable);
-        MultipartFile file = null;
         return addDataInDB.addInDBFromFile(file, nameTable);
     }
 }

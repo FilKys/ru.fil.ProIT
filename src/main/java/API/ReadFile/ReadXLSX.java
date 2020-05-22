@@ -7,15 +7,16 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Iterator;
 
 public class ReadXLSX implements SQLInsert{
 
-    public StringBuilder read(File fileIn, String tableDB) {
-        tableDB = "docs";
-        try (XSSFWorkbook myExcelBook = new XSSFWorkbook(new FileInputStream(fileIn))) {
+    public StringBuilder read(File fileIn, String tableDB) throws IOException {
+            XSSFWorkbook myExcelBook = new XSSFWorkbook(new FileInputStream(fileIn));
             StringBuilder sb = new StringBuilder();
             XSSFSheet myExcelSheet = myExcelBook.getSheetAt(0);
+            myExcelBook.close();
             sb.append(getInsertSQL(tableDB));
             for (int i = 1; i <= myExcelSheet.getLastRowNum(); i++) {
                 sb.append("(");
@@ -44,12 +45,6 @@ public class ReadXLSX implements SQLInsert{
                         sb.append(",");
                 }
             }
-//            sb.append(");");
-            System.out.println(sb);
             return sb;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 }

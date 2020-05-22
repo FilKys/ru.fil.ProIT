@@ -5,18 +5,14 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 
 public class ReadCSV implements SQLInsert{
 
-    public StringBuilder read(File fileIn, String tableDB) {
-        try {
+    public StringBuilder read(File fileIn, String tableDB) throws IOException {
             StringBuilder sb = new StringBuilder().append(getInsertSQL(tableDB));
             BufferedReader br = new BufferedReader(new FileReader(fileIn, Charset.forName("windows-1251")));
             String line = br.readLine();
@@ -48,11 +44,6 @@ public class ReadCSV implements SQLInsert{
                 } else
                     j++;
             }
-            System.out.println(sb);
             return sb;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 }

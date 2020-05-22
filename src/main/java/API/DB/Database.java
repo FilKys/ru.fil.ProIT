@@ -200,7 +200,19 @@ class Database {
             return "Completed";
         } catch (SQLException e) {
             logger.error("Connection Failed: "+e.getMessage());
-//            e.printStackTrace();
+            return "ERROR! "+e.getMessage();
+        }
+    }
+
+    public String addData(StringBuilder sql) {
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            logger.info("Connection to db - completed");
+            Statement statement = connection.createStatement();
+            statement.execute(sql.toString());
+            logger.info("Insert - completed");
+            return "Insert - completed";
+        } catch (SQLException e) {
+            logger.error("Connection Failed: "+e.getMessage());
             return "ERROR! "+e.getMessage();
         }
     }

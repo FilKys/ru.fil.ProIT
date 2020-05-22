@@ -2,6 +2,8 @@ package API.DB;
 
 import API.ReadFile.ReadCSV;
 import API.ReadFile.ReadXLSX;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +15,8 @@ import java.util.Objects;
 @Component
 public class AddDataInDB {
 
+    private static Logger logger = LogManager.getLogger(AddDataInDB.class);
+
     private ReadXLSX readXLSX = new ReadXLSX();
     private ReadCSV readCSV = new ReadCSV();
 
@@ -21,39 +25,33 @@ public class AddDataInDB {
 
     public String addInDBFromFile(MultipartFile file, String tableDB) throws SQLException {
         try {
-            //        File fileIn = new File(Objects.requireNonNull(file.getOriginalFilename()));
-//            File fileIn = new File("C:\\Users\\milli\\IdeaProjects\\ru.fil.ProIT\\oiv.xlsx");
-            File fileIn = new File("C:\\Users\\milli\\IdeaProjects\\ru.fil.ProIT\\kladr.csv");
+            File fileIn = new File(Objects.requireNonNull(file.getOriginalFilename()));
+            logger.info("File " + fileIn.getName() + " open");
             String typeFile = fileIn.getName().toLowerCase().substring(fileIn.getName().lastIndexOf('.'));
             StringBuilder sql = new StringBuilder();
             switch (typeFile) {
                 case ".csv":
+                    logger.info("Read " + fileIn.getName() + " - start");
                     sql = readCSV.read(fileIn, tableDB);
-                    System.out.println("Считывание закончено!");
+                    logger.info("Read " + fileIn.getName() + " - stop");
                     break;
                 case ".xlsx":
+                    logger.info("Read " + fileIn.getName() + " - start");
                     sql = readXLSX.read(fileIn, tableDB);
-                    System.out.println("Считывание закончено!");
+                    logger.info("Read " + fileIn.getName() + " - stop");
                     break;
             }
             if (sql != null) {
-                /*
-                try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
-                    Statement statement = connection.createStatement();
-                    statement.execute(sql.toString());
-                    System.out.println("Запись в БД закончена!");
-                } catch (SQLException e) {
-                    System.out.println("Connection Failed");
-                    e.printStackTrace();
-                }*/
+                logger.info("SQL insert - " + sql);
+                return db.addData(sql);
             } else {
+                logger.error("SQL insert is null!!!");
                 throw new Exception("SQL insert is null!!!");
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            return "Load file = false";
+            logger.error("Read file failed: " + e.getMessage());
+            return "ERROR! " + e.getMessage();
         }
-        return "Load file - completed";
     }
 
     public String addUser(String login, String pass, String role) {
