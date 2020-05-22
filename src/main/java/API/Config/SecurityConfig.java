@@ -41,8 +41,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/kladr/**").access("hasRole('UserKladr')")
                 .antMatchers("/oiv/**").access("hasRole('UserOiv')")
                 .antMatchers("/docs/**").access("hasRole('UserDocs')")
-                .antMatchers("/**").access("hasRole('Admin')")
-        ;
+                .antMatchers("/**").access("hasRole('Admin')");
         logger.info("Init roles - completed");
     }
 }

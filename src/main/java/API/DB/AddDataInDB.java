@@ -15,10 +15,10 @@ import java.util.Objects;
 @Component
 public class AddDataInDB {
 
-    private static Logger logger = LogManager.getLogger(AddDataInDB.class);
+    private static final Logger logger = LogManager.getLogger(AddDataInDB.class);
 
-    private ReadXLSX readXLSX = new ReadXLSX();
-    private ReadCSV readCSV = new ReadCSV();
+    private final ReadXLSX readXLSX = new ReadXLSX();
+    private final ReadCSV readCSV = new ReadCSV();
 
     @Autowired
     private Database db = new Database();

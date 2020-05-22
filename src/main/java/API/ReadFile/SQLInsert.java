@@ -1,6 +1,11 @@
 package API.ReadFile;
 
+import java.io.File;
+import java.io.IOException;
+
 public interface SQLInsert {
+
+    public StringBuilder read(File fileIn, String tableDB) throws IOException;
 
     default String getInsertSQL(String tableDB) {
         switch (tableDB) {
